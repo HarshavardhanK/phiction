@@ -1,0 +1,1 @@
+OPENAI_AWS_SECRET = "dev/phiction/openai/keys"
