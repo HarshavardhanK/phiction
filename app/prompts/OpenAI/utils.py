@@ -1,9 +1,13 @@
-import boto3
 import json
+
+import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 
 def get_secret(secret_name):
     # Create a Secrets Manager client
+    session = boto3.Session()
+    region_name = session.region_name
+
     client = boto3.client(
         service_name='secretsmanager',
         region_name=region_name
@@ -30,18 +34,33 @@ def get_secret(secret_name):
     return None
 
 def get_open_ai_keys():
+
     secret_name = "dev/phiction/openai/keys"
+
+    secret = get_secret(secret_name)
+
+    try:
+        secret_dict = json.loads(secret)
+
+        return {
+            'OPEN_AI_ORG_ID': secret_dict.get("OPENAI_ORG_ID"),
+            'OPEN_AI_PROJ_ID': secret_dict.get("OPENAI_PROJ_ID"),
+            'OPENAI_API_KEY': secret_dict.get("OPENAI_API_KEY")
+        }
+    
+    except Exception as e:
+        print(f"Error parsing secret {secret} - {e}")
+
+    return None
+
+def test():
+
+    session = boto3.Session()
+
+    secret_name = "dev/phiction/openai/keys"
+  
+    print(get_open_ai_keys())
 
 
 if __name__ == "__main__":
-    session = boto3.Session()
-  
-    
-    region_name = session.region_name  # Adjust as needed
-
-    secret = get_secret(secret_name, region_name)
-    if secret:
-        # Parse the JSON string to extract the API key
-        secret_dict = json.loads(secret)
-        api_key = secret_dict.get("api_key")  # Adjust the key to match your secret's structure
-        print(f"Retrieved API key: {api_key}")
+    test()

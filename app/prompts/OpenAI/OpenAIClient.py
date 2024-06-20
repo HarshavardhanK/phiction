@@ -1,5 +1,5 @@
 from openai import OpenAI
-from prompts.OpenAI.get_secrets import get_open_ai_keys
+from utils import get_open_ai_keys
 
 #A class wrapper for OpenAI Client to interact with ChatGPT
 
